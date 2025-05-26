@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Portal</title>
+  <style>
+    /* Simple styles for clarity */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .event-card {
+      border: 1px solid #ccc;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      width: 300px;
+    }
+    #loading-spinner {
+      display: none;
+      margin-bottom: 10px;
+    }
+    #form-error {
+      color: red;
+      display: none;
+      margin-bottom: 10px;
+    }
+    #form-success {
+      color: green;
+      display: none;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Community Portal</h1>
+
+  <!-- Filters -->
+  <label for="category-filter">Filter by category: </label>
+  <select id="category-filter">
+    <option value="all">All</option>
+    <option value="food">Food</option>
+    <option value="music">Music</option>
+    <option value="art">Art</option>
+    <option value="general">General</option>
+  </select>
+
+  <label for="search-input" style="margin-left: 20px;">Search events: </label>
+  <input type="text" id="search-input" placeholder="Type event name and press Enter" />
+
+  <div id="loading-spinner">Loading events...</div>
+
+  <!-- Events container -->
+  <div id="events-container"></div>
+
+  <!-- Registration form -->
+  <h2>Register for an Event</h2>
+  <form id="registration-form">
+    <label>
+      Name: <input type="text" name="name" required />
+    </label><br /><br />
+    <label>
+      Email: <input type="email" name="email" required />
+    </label><br /><br />
+    <label>
+      Event:
+      <select name="event" required>
+        <!-- Dynamically populated below by JS -->
+      </select>
+    </label><br /><br />
+    <button type="submit">Register</button>
+  </form>
+
+  <div id="form-error"></div>
+  <div id="form-success"></div>
+
+  <script>
+    // ===== Your entire JS code embedded here =====
+    console.log("Welcome to the Community Portal");
+
+    window.addEventListener('load', () => {
+      alert("Community Portal is fully loaded!");
+    });
+
+    const eventName = "Community Bake Sale";
+    const eventDate = "2023-12-15";
+    let availableSeats = 50;
+
+    function updateEventInfo() {
+      console.log(\`Event: \${eventName} on \${eventDate}. Seats available: \${availableSeats}\`);
+    }
+
+    function registerForEvent() {
+      if (availableSeats > 0) {
+        availableSeats--;
+        updateEventInfo();
+      } else {
+        console.log("Sorry, no seats available!");
+      }
+    }
+
+    const events = [
+      { id: 1, name: "Bake Sale", date: "2023-12-15", seats: 50, category: "food" },
+      { id: 2, name: "Music Festival", date: "2023-11-20", seats: 0, category: "music" },
+      { id: 3, name: "Art Workshop", date: "2023-12-01", seats: 15, category: "art" }
+    ];
+
+    function displayValidEvents() {
+      const today = new Date().toISOString().split('T')[0];
+      
+      events.forEach(event => {
+        try {
+          if (new Date(event.date) >= new Date(today) && event.seats > 0) {
+            console.log(\`VALID: \${event.name} on \${event.date}\`);
+          }
+        } catch (error) {
+          console.error(\`Error processing event \${event.id}:\`, error);
+        }
+      });
+    }
+
+    function createEventManager() {
+      let totalRegistrations = 0;
+      
+      return {
+        addEvent: (name, date, seats, category) => {
+          const newEvent = { id: events.length + 1, name, date, seats, category };
+          events.push(newEvent);
+          updateEventDropdown();
+          return newEvent;
+        },
+        
+        registerUser: (eventId) => {
+          const event = events.find(e => e.id === eventId);
+          if (event && event.seats > 0) {
+            event.seats--;
+            totalRegistrations++;
+            return true;
+          }
+          return false;
+        },
+        
+        filterEvents: (callback) => events.filter(callback),
+        
+        getTotalRegistrations: () => totalRegistrations
+      };
+    }
+
+    const eventManager = createEventManager();
+
+    class Event {
+      constructor(id, name, date, seats, category) {
+        this.id = id;
+        this.name = name;
+        this.date = date;
+        this.seats = seats;
+        this.category = category;
+      }
+      
+      checkAvailability() {
+        return this.seats > 0;
+      }
+      
+      static fromObject(obj) {
+        return new Event(obj.id, obj.name, obj.date, obj.seats, obj.category);
+      }
+    }
+
+    const eventInstances = events.map(event => Event.fromObject(event));
+
+    // Add new event
+    eventManager.addEvent("Music Night", "2023-12-10", 30, "music");
+
+    // Filter music events example
+    const musicEvents = eventManager.filterEvents(event => event.category === "music");
+
+    // Format event display cards example
+    const eventCards = events.map(event => ({
+      title: \`\${event.name} (\${event.category})\`,
+      date: new Date(event.date).toLocaleDateString(),
+      seats: \`\${event.seats} seats left\`
+    }));
+
+    function renderEvents(eventsList) {
+      const container = document.querySelector('#events-container');
+      container.innerHTML = '';
+      
+      eventsList.forEach(event => {
+        const card = document.createElement('div');
+        card.className = 'event-card';
+        card.innerHTML = \`
+          <h3>\${event.name}</h3>
+          <p>Date: \${event.date}</p>
+          <p>Seats: \${event.seats}</p>
+          <button class="register-btn" data-id="\${event.id}">Register</button>
+        \`;
+        container.appendChild(card);
+      });
+    }
+
+    // Update event dropdown in form dynamically
+    function updateEventDropdown() {
+      const select = document.querySelector('#registration-form select[name="event"]');
+      select.innerHTML = ''; // Clear options
+      events.forEach(event => {
+        const option = document.createElement('option');
+        option.value = event.id;
+        option.textContent = \`\${event.name} (\${event.seats} seats left)\`;
+        if(event.seats === 0) option.disabled = true;
+        select.appendChild(option);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initial render
+      renderEvents(events);
+      updateEventDropdown();
+
+      // Register button click
+      document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('register-btn')) {
+          const eventId = parseInt(e.target.dataset.id);
+          if (eventManager.registerUser(eventId)) {
+            renderEvents(events);
+            updateEventDropdown();
+            alert("Registration successful!");
+          } else {
+            alert("Registration failed. No seats available.");
+          }
+        }
+      });
+      
+      // Category filter
+      document.querySelector('#category-filter').addEventListener('change', (e) => {
+        const category = e.target.value;
+        const filtered = category === 'all' 
+          ? events 
+          : eventManager.filterEvents(event => event.category === category);
+        renderEvents(filtered);
+      });
+      
+      // Quick search
+      document.querySelector('#search-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const searchTerm = e.target.value.toLowerCase();
+          const filtered = eventManager.filterEvents(event => 
+            event.name.toLowerCase().includes(searchTerm)
+          );
+          renderEvents(filtered);
+        }
+      });
+    });
+
+    async function fetchEvents() {
+      try {
+        document.querySelector('#loading-spinner').style.display = 'block';
+        
+        // Mock API call (note: this URL won't work here, just an example)
+        const response = await fetch('https://mockapi.io/events');
+        const data = await response.json();
+        
+        const newEvents = data.map(item => ({
+          id: item.id,
+          name: item.name,
+          date: item.date,
+          seats: item.seats,
+          category: item.category
+        }));
+        
+        events.push(...newEvents);
+        renderEvents(events);
+        updateEventDropdown();
+      } catch (error) {
+        console.error("Failed to fetch events:", error);
+        alert("Failed to load events. Please try again later.");
+      } finally {
+        document.querySelector('#loading-spinner').style.display = 'none';
+      }
+    }
+
+    function createEvent({ name, date, seats = 20, category = 'general' }) {
+      return { name, date, seats, category };
+    }
+
+    function filterEventsByDate(targetDate) {
+      const eventsCopy = [...events];
+      return eventsCopy.filter(event => event.date === targetDate);
+    }
+
+    // Form Handling
+    document.querySelector('#registration-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const form = e.target;
+      const name = form.elements['name'].value;
+      const email = form.elements['email'].value;
+      const eventId = parseInt(form.elements['event'].value);
+      
+      if (!name || !email || !eventId) {
+        showFormError("Please fill all fields");
+        return;
+      }
+      
+      if (!validateEmail(email)) {
+        showFormError("Please enter a valid email");
+        return;
+      }
+      
+      if (eventManager.registerUser(eventId)) {
+        showFormSuccess("Registration successful!");
+        form.reset();
+        renderEvents(events);
+        updateEventDropdown();
+      } else {
+        showFormError("Registration failed. No seats available.");
+      }
+    });
+
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function showFormError(message) {
+      const errorElement = document.querySelector('#form-error');
+      errorElement.textContent = message;
+      errorElement.style.display = 'block';
+      setTimeout(() => {
+        errorElement.style.display = 'none';
+      }, 4000);
+    }
+
+    function showFormSuccess(message) {
+      const successElement = document.querySelector('#form-success');
+      successElement.textContent = message;
+      successElement.style.display = 'block';
+      setTimeout(() => {
+        successElement.style.display = 'none';
+      }, 3000);
+    }
+
+    async function submitRegistration(userData) {
+      try {
+        const response = await fetch('https://mockapi.io/registrations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(userData)
+        });
+        
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error submitting registration:', error);
+        throw error;
+      }
+    }
+
+    function debugRegistration(eventId, userId) {
+      console.group('Registration Debug');
+      console.log('Attempting registration for:', { eventId, userId });
+      console.table(events.find(e => e.id === eventId));
+      
+      try {
+        const success = eventManager.registerUser(eventId);
+        console.log('Registration result:', success);
+        return success;
+      } catch (error) {
+        console.error('Registration error:', error);
+        throw error;
+      } finally {
+        console.groupEnd();
+      }
+    }
+  </script>
+</body>
+</html>
