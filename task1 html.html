@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title> Community Event Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    :root {
+      --lavender: #E6E6FA;
+      --lavender-dark: #B57EDC;
+      --lavender-mid: #D8BFD8;
+      --lavender-shadow: #C8A2C8;
+      --text-dark: #4B0082;
+      --text-light: #6A5ACD;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: var(--lavender);
+      color: var(--text-dark);
+    }
+
+    nav {
+      background-color: var(--lavender-dark);
+      color: white;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 2px 8px var(--lavender-shadow);
+    }
+
+    nav a {
+      color: white;
+      margin: 0 20px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    section {
+      padding: 40px 20px;
+    }
+
+    #welcomeBanner {
+      background-color: var(--lavender-mid);
+      padding: 25px;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px var(--lavender-shadow);
+    }
+
+    .highlight {
+      background-color: var(--lavender-dark);
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: white;
+      display: inline-block;
+    }
+
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+
+    table caption {
+      margin-bottom: 10px;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    table td {
+      padding: 10px;
+    }
+
+    table img {
+      width: 100px;
+      height: auto;
+      border: 2px solid var(--lavender-shadow);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    form {
+      background-color: white;
+      padding: 30px;
+      max-width: 600px;
+      margin: 0 auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px var(--lavender-shadow);
+    }
+
+    form input, form select, form textarea, form button {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid var(--lavender-dark);
+      border-radius: 6px;
+    }
+
+    form button {
+      background-color: var(--lavender-dark);
+      color: white;
+      border: none;
+      font-weight: bold;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+
+    form button:hover {
+      background-color: var(--text-light);
+    }
+
+    video {
+      width: 100%;
+      max-width: 600px;
+      display: block;
+      margin: 0 auto;
+      border: 3px solid var(--lavender-shadow);
+      border-radius: 8px;
+    }
+
+    #mapResult {
+      background: #fff;
+      padding: 15px;
+      max-width: 400px;
+      margin: 15px auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px var(--lavender-shadow);
+      text-align: center;
+    }
+
+    footer {
+      background-color: var(--lavender-dark);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-weight: bold;
+    }
+  </style>
+
+  <script>
+    window.onload = function () {
+      let eventType = localStorage.getItem('eventType');
+      if (eventType) {
+        document.getElementById('eventSelect').value = eventType;
+      }
+      window.onbeforeunload = function () {
+        return 'Are you sure you want to leave?';
+      };
+    };
+
+    function storeEventType(e) {
+      localStorage.setItem('eventType', e.value);
+      document.getElementById('feeDisplay').textContent = "Fee: $" + (e.value === "Music" ? 20 : 10);
+    }
+
+    function clearPreferences() {
+      localStorage.clear();
+      sessionStorage.clear();
+      alert("Preferences Cleared");
+    }
+
+    function validatePhone(e) {
+      let phone = e.value;
+      if (!/^\d{10}$/.test(phone)) {
+        alert("Enter a valid 10-digit phone number");
+        e.focus();
+      }
+    }
+
+    function enlargeImage(img) {
+      img.style.width = "200px";
+    }
+
+    function countCharacters(textarea) {
+      document.getElementById("charCount").textContent = "Characters: " + textarea.value.length;
+    }
+
+    function showConfirmation() {
+      document.getElementById("confirmation").value = "Form submitted successfully!";
+    }
+
+    function findLocation() {
+      const result = document.getElementById("mapResult");
+      if (!navigator.geolocation) {
+        result.textContent = "Geolocation not supported.";
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          result.innerHTML = `Latitude: ${pos.coords.latitude}<br>Longitude: ${pos.coords.longitude}`;
+        },
+        (err) => {
+          result.textContent = "Error: " + err.message;
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    }
+
+    function videoReady() {
+      document.getElementById("videoStatus").textContent = "🎥 Video ready to play!";
+    }
+  </script>
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#events">Events</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#register">Register</a>
+    <a href="help.html" target="_blank">Help</a>
+  </nav>
+
+  <!-- Welcome -->
+  <section id="home">
+    <div id="welcomeBanner">
+      <h1>Welcome to Lavender Community Events 🌸</h1>
+      <p>Enjoy our <span class="highlight">special offer</span> this month!</p>
+      <p class="highlight">Your presence makes the event bloom!</p>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section id="gallery">
+    <h2 style="text-align:center;">📸 Event Memories</h2>
+    <table>
+      <caption>Community Moments</caption>
+      <tr>
+        <td><img src="https://via.placeholder.com/100" ondblclick="enlargeImage(this)" alt="Event1"></td>
+        <td><img src="https://via.placeholder.com/100" ondblclick="enlargeImage(this)" alt="Event2"></td>
+        <td><img src="https://via.placeholder.com/100" ondblclick="enlargeImage(this)" alt="Event3"></td>
+      </tr>
+      <tr>
+        <td><img src="https://via.placeholder.com/100" ondblclick="enlargeImage(this)" alt="Event4"></td>
+        <td><img src="https://via.placeholder.com/100" ondblclick="enlargeImage(this)" alt="Event5"></td>
+        <td><img src="https://via.placeholder.com/100" ondblclick="enlargeImage(this)" alt="Event6"></td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- Registration Form -->
+  <section id="register">
+    <h2 style="text-align:center;">📝 Event Registration</h2>
+    <form onsubmit="showConfirmation(); return false;">
+      <label>Name: <input type="text" required placeholder="Full Name" autofocus></label>
+      <label>Email: <input type="email" required placeholder="you@example.com"></label>
+      <label>Phone: <input type="text" onblur="validatePhone(this)" placeholder="10-digit phone"></label>
+      <label>Event Date: <input type="date" required></label>
+      <label>Event Type:
+        <select id="eventSelect" onchange="storeEventType(this)">
+          <option>Music</option>
+          <option>Art</option>
+          <option>Sports</option>
+        </select>
+      </label>
+      <span id="feeDisplay" class="highlight"></span>
+      <label>Message:<textarea onkeyup="countCharacters(this)"></textarea></label>
+      <span id="charCount">Characters: 0</span>
+      <button type="submit">Submit</button>
+      <button type="reset">Clear</button>
+      <button type="button" onclick="clearPreferences()">Clear Preferences</button>
+      <output id="confirmation"></output>
+    </form>
+  </section>
+
+  <!-- Video -->
+  <section>
+    <h2 style="text-align:center;">🎬 Event Promo</h2>
+    <video controls oncanplay="videoReady()">
+      <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+    </video>
+    <p id="videoStatus" style="text-align:center;"></p>
+  </section>
+
+  <!-- Location -->
+  <section id="events">
+    <h2 style="text-align:center;">📍 Find Nearby Events</h2>
+    <div style="text-align:center;">
+      <button onclick="findLocation()">Find My Location</button>
+    </div>
+    <div id="mapResult"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    &copy; 2025 Lavender Community Portal 💜
+  </footer>
+
+</body>
+</html>
