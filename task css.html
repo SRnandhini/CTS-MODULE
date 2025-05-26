@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Community Event Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Internal CSS (CSS3 Concepts) -->
+  <style>
+    /* === Global Reset === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* === Body Styling === */
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, #d3cce3, #e9e4f0);
+    }
+
+    /* === Inline Example: This is used directly in h1 === */
+
+    /* === Navbar === */
+    .navbar-nav {
+      gap: 10px;
+    }
+
+    /* === Event Cards === */
+    .eventCard {
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background-color: white;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: 0.3s;
+    }
+    .eventCard:hover {
+      transform: scale(1.02);
+    }
+
+    /* === Table === */
+    table, th, td {
+      border: 1px solid #999;
+      border-collapse: collapse;
+      padding: 10px;
+      background-color: #fff;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    /* === Multi-column Text === */
+    .multi-column {
+      column-count: 2;
+      column-gap: 30px;
+      column-rule: 1px solid gray;
+    }
+
+    /* === Form Outline and Focus === */
+    .form-control:focus {
+      outline: 2px solid #007BFF;
+      box-shadow: none;
+    }
+
+    /* === Links === */
+    a:link { color: blue; }
+    a:visited { color: purple; }
+    a:hover { color: green; }
+    a:active { color: red; }
+
+    /* === Media Queries === */
+    @media (max-width: 768px) {
+      .multi-column {
+        column-count: 1;
+      }
+      .navbar-nav {
+        flex-direction: column;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header with inline style -->
+  <header class="text-center py-4">
+    <h1 style="color: red;">🌟 Local Community Event Portal</h1>
+    <p class="lead text-muted">Explore, Register, Participate</p>
+  </header>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark px-4">
+    <a class="navbar-brand" href="#">EventPortal</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div id="nav" class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Events</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Register</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Grid Event Cards -->
+  <div class="container my-5">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="eventCard">
+          <h3 class="text-uppercase fw-bold">🎶 Music Night</h3>
+          <p>Enjoy live music performances by local bands at the city center stage.</p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="eventCard">
+          <h3 class="text-uppercase fw-bold">🎨 Art Workshop</h3>
+          <p>Hands-on painting sessions led by professionals at the Art Hub.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="container mb-5">
+    <h2 class="mb-3">📅 Upcoming Events</h2>
+    <table class="table table-bordered text-center">
+      <thead class="table-dark">
+        <tr><th>Event</th><th>Date</th><th>Location</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Music Night</td><td>June 20</td><td>Main Square</td></tr>
+        <tr><td>Art Workshop</td><td>June 25</td><td>Art Hub</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Multi-Column News -->
+  <div class="container my-5">
+    <h2 class="mb-3">📰 Community News</h2>
+    <div class="multi-column">
+      <p>The local community center will be hosting a volunteer fair. Join hands with other citizens to make a difference. Various NGOs and support groups will be available for interaction and registration.</p>
+      <p>Mayor announces a city-wide green initiative encouraging residents to plant trees. Free saplings will be distributed at the municipal park starting next Monday.</p>
+    </div>
+  </div>
+
+  <!-- Registration Form -->
+  <div class="container my-5">
+    <h2 class="mb-3">📝 Register for an Event</h2>
+    <form class="bg-light p-4 rounded shadow">
+      <div class="mb-3">
+        <label for="name" class="form-label fw-bold">Full Name</label>
+        <input type="text" id="name" class="form-control" placeholder="Enter your name">
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label fw-bold">Email</label>
+        <input type="email" id="email" class="form-control" placeholder="example@mail.com">
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Submit</button>
+    </form>
+  </div>
+
+  <!-- Modal Trigger -->
+  <div class="text-center my-4">
+    <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#infoModal">
+      <i class="bi bi-info-circle"></i> More Info
+    </button>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-center">
+        <div class="modal-header">
+          <h5 class="modal-title" id="infoLabel">Event Guidelines</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          All events will follow local health and safety protocols.<br>
+          Masks and prior registration are mandatory.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-3 mt-5">
+    &copy; 2025 Local Community | Follow us: 
+    <a href="#" class="text-white"><i class="bi bi-facebook mx-2"></i></a>
+    <a href="#" class="text-white"><i class="bi bi-twitter"></i></a>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
